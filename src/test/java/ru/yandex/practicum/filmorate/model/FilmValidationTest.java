@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FilmValidationTest {
 
@@ -28,9 +27,13 @@ class FilmValidationTest {
         Film film = new Film(null, " ", "Description",
                 LocalDate.of(2000, 1, 1), 100);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("name")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("name")),
+                        "Должно быть нарушение для поля name")
+        );
     }
 
     @Test
@@ -39,9 +42,13 @@ class FilmValidationTest {
         Film film = new Film(null, "Title", longDesc,
                 LocalDate.of(2000, 1, 1), 100);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("description")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("description")),
+                        "Должно быть нарушение для поля description")
+        );
     }
 
     @Test
@@ -49,9 +56,13 @@ class FilmValidationTest {
         Film film = new Film(null, "Title", "Desc",
                 LocalDate.of(1700, 1, 1), 120);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("releaseDate")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("releaseDate")),
+                        "Должно быть нарушение для поля releaseDate")
+        );
     }
 
     @Test
@@ -59,10 +70,13 @@ class FilmValidationTest {
         Film film = new Film(null, "Title", "Desc",
                 LocalDate.of(2000, 1, 1), -50);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty());
-        System.out.println(violations);
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("duration")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("duration")),
+                        "Должно быть нарушение для поля duration")
+        );
     }
 
     @Test
@@ -70,6 +84,6 @@ class FilmValidationTest {
         Film film = new Film(null, "Title", "Desc",
                 LocalDate.of(2000, 1, 1), 120);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), "Не должно быть нарушений валидации");
     }
 }

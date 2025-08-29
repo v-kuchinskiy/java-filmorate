@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserValidationTest {
 
@@ -28,9 +27,13 @@ class UserValidationTest {
         User user = new User(null, "invalid-email", "login", "Name",
                 LocalDate.of(1990, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("email")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("email")),
+                        "Должно быть нарушение для поля email")
+        );
     }
 
     @Test
@@ -38,9 +41,13 @@ class UserValidationTest {
         User user = new User(null, "email@mail.com", "user name", "Name",
                 LocalDate.of(2000, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("login")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("login")),
+                        "Должно быть нарушение для поля login")
+        );
     }
 
     @Test
@@ -48,9 +55,13 @@ class UserValidationTest {
         User user = new User(null, "user@mail.com", "login", "Name",
                 LocalDate.now().plusDays(1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v ->
-                v.getPropertyPath().toString().equals("birthday")));
+
+        assertAll(
+                () -> assertFalse(violations.isEmpty(), "Должны быть нарушения валидации"),
+                () -> assertTrue(violations.stream().anyMatch(v ->
+                                v.getPropertyPath().toString().equals("birthday")),
+                        "Должно быть нарушение для поля birthday")
+        );
     }
 
     @Test
@@ -58,6 +69,7 @@ class UserValidationTest {
         User user = new User(null, "user@mail.com", "login", "Name",
                 LocalDate.of(1990, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertTrue(violations.isEmpty());
+        // оставил одиночный assert, так как только одна проверка.
+        assertTrue(violations.isEmpty(), "Не должно быть нарушений валидации");
     }
 }
