@@ -6,8 +6,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -27,7 +25,7 @@ class UserValidationTest {
 
     @Test
     void shouldFailWhenEmailInvalid() {
-        User user = new User(null, "Name", new HashSet<>(), "invalid-email","login",
+        User user = new User(null, "Name", new HashSet<>(), "invalid-email", "login",
                 LocalDate.of(1990, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
