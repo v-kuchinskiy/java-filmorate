@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -27,6 +30,15 @@ public class InMemoryFilmStorage implements FilmStorage {
             return Optional.empty();
         }
         return Optional.of(new Film(films.get(id)));
+    }
+
+    @Override
+    public List<Film> findPopularFilms(int limit) {
+        return films.values().stream()
+                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
+                .limit(limit)
+                .map(Film::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -50,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void removeFilm(Film film) {
         log.debug("Удаление фильма: {}", film);
-        if (film == null || !films.containsKey(film.getId())) {
+        if (!exists(film)) {
             log.error("Попытка удалить несуществующий фильм: {}", film);
             throw new NotFoundException("Фильм для удаления не найден.");
         }

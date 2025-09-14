@@ -1,14 +1,12 @@
 package ru.yandex.practicum.filmorate.service.user;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,11 +58,13 @@ public class UserService {
 
     public List<User> getFriends(Long userId) {
         User user = getUserOrThrow(userId);
+        Set<Long> friendIds = user.getFriends();
 
-        return user.getFriends().stream()
-                .map(userStorage::getUserById)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+        if (friendIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return userStorage.getUsersByIds(friendIds);
     }
 
     public List<User> getCommonFriends(Long userIdA, Long userIdB) {

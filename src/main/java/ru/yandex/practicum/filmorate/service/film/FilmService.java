@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.config.AppMode;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,19 +8,15 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
 
-    private final AppMode config;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    public FilmService(AppMode config, FilmStorage filmStorage, UserStorage userStorage) {
-        this.config = config;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
@@ -58,16 +53,8 @@ public class FilmService {
         return new Film(film);
     }
 
-    public List<Film> getPopularFilms() {
-        return getPopularFilms(config.getMaxPopularCount());
-    }
-
     public List<Film> getPopularFilms(int limit) {
-        return filmStorage.findAll().stream()
-                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
-                .limit(limit)
-                .map(Film::new)
-                .collect(Collectors.toList());
+        return filmStorage.findPopularFilms(limit);
     }
 
     private Film getFilmOrThrow(Long id) {

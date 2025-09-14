@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.config.AppMode;
+import ru.yandex.practicum.filmorate.config.ApplicationMode;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    private final AppMode appMode;
+    private final ApplicationMode applicationMode;
 
-    public ErrorHandler(AppMode appMode) {
-        this.appMode = appMode;
+    public ErrorHandler(ApplicationMode applicationMode) {
+        this.applicationMode = applicationMode;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,7 +34,7 @@ public class ErrorHandler {
                         error.getDefaultMessage()))
                 .toList();
 
-        String message = appMode.isDev()
+        String message = applicationMode.isDevelopment()
                 ? "Ошибка валидации: " + ex.getMessage()
                 : "Некорректный запрос.";
 
@@ -57,7 +57,7 @@ public class ErrorHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex,
                                                         HttpServletRequest request) {
-        String message = appMode.isDev()
+        String message = applicationMode.isDevelopment()
                 ? ex.getMessage()
                 : "Произошла непредвиденная ошибка.";
 
@@ -81,7 +81,7 @@ public class ErrorHandler {
     public ResponseEntity<ErrorResponse> handleUnknown(Exception ex,
                                                        HttpServletRequest request) {
 
-        String message = appMode.isDev()
+        String message = applicationMode.isDevelopment()
                 ? ex.getMessage()
                 : "Произошла непредвиденная ошибка.";
 

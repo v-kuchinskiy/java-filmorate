@@ -8,6 +8,8 @@ public interface FilmStorage {
 
     Optional<Film> getFilmById(Long id);
 
+    List<Film> findPopularFilms(int limit);
+
     Film addFilm(Film film);
 
     void removeFilm(Film film);

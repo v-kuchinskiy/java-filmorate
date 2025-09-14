@@ -40,7 +40,7 @@ class FilmValidationTest {
     @Test
     void shouldFailWhenDescriptionTooLong() {
         String longDesc = "x".repeat(201);
-        Film film = new Film(null, new HashSet<>(),"Title", longDesc,
+        Film film = new Film(null, new HashSet<>(), "Title", longDesc,
                 LocalDate.of(2000, 1, 1), 100);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
@@ -54,7 +54,7 @@ class FilmValidationTest {
 
     @Test
     void shouldFailWhenReleaseDateTooEarly() {
-        Film film = new Film(null, new HashSet<>(),"Title", "Desc",
+        Film film = new Film(null, new HashSet<>(), "Title", "Desc",
                 LocalDate.of(1700, 1, 1), 120);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
@@ -68,7 +68,7 @@ class FilmValidationTest {
 
     @Test
     void shouldFailWhenDurationNegative() {
-        Film film = new Film(null, new HashSet<>(),"Title", "Desc",
+        Film film = new Film(null, new HashSet<>(), "Title", "Desc",
                 LocalDate.of(2000, 1, 1), -50);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
@@ -82,7 +82,7 @@ class FilmValidationTest {
 
     @Test
     void shouldPassWhenFilmIsValid() {
-        Film film = new Film(null, new HashSet<>(),"Title", "Desc",
+        Film film = new Film(null, new HashSet<>(), "Title", "Desc",
                 LocalDate.of(2000, 1, 1), 120);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Не должно быть нарушений валидации");

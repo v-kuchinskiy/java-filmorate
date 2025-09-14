@@ -1,18 +1,19 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@Profile("dev")
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new ConcurrentHashMap<>();
@@ -38,6 +39,19 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public List<User> getUsersByIds(Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return ids.stream()
+                .filter(id -> id != null && users.containsKey(id))
+                .map(users::get)
+                .map(User::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public User addUser(User user) {
         log.info("Создание нового пользователя с login: {}", user.getLogin());
         user.setId(getNextId());
@@ -55,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void removeUser(User user) {
         log.debug("Удаление пользователя: {}", user);
-        if (user == null || !users.containsKey(user.getId())) {
+        if (!exists(user)) {
             log.error("Попытка удалить несуществующего пользователя: {}", user);
             throw new NotFoundException("Пользователь для удаления не найден.");
         }
