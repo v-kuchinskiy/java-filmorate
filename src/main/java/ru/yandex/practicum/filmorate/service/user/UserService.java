@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service.user;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
