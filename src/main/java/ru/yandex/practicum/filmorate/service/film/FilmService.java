@@ -1,0 +1,69 @@
+package ru.yandex.practicum.filmorate.service.film;
+
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
+import java.util.Collection;
+import java.util.List;
+
+@Service
+public class FilmService {
+
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+    }
+
+    public Film addFilm(Film film) {
+        return filmStorage.addFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        return filmStorage.updateFilm(film);
+    }
+
+    public Collection<Film> findAll() {
+        return filmStorage.findAll();
+    }
+
+    public Film addLike(Long filmId, Long userId) {
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.likeFilm(user.getId());
+        filmStorage.updateFilm(film);
+
+        return new Film(film);
+    }
+
+    public Film removeLike(Long filmId, Long userId) {
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.unlikeFilm(user.getId());
+        filmStorage.updateFilm(film);
+
+        return new Film(film);
+    }
+
+    public List<Film> getPopularFilms(int limit) {
+        return filmStorage.findPopularFilms(limit);
+    }
+
+    private Film getFilmOrThrow(Long id) {
+        return filmStorage.getFilmById(id)
+                .orElseThrow(() -> new NotFoundException("Фильм с ID " + id + " не найден"));
+    }
+
+    private User getUserOrThrow(Long id) {
+        return userStorage.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + id + " не найден"));
+    }
+}
